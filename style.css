@@ -174,4 +174,12 @@ body {
   .about img {
     padding-right: 100px;
   }
+  #contact {
+    font-size: 10px;
+    text-align: center;
+  }
+  #contact h2{
+    font-size: 20px;
+    text-align: center;
+  }
 }
