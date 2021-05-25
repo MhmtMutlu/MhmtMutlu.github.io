@@ -36,17 +36,6 @@ body {
     rgba(15, 142, 222, 1) 63%,
     rgba(0, 255, 251, 0.8248249983587185) 100%
   );
-  /* background: rgb(140, 194, 102);
-  background: linear-gradient(
-    122deg,
-    rgba(140, 194, 102, 0.8836485277704832) 0%,
-    rgba(99, 181, 193, 1) 14%,
-    rgba(63, 68, 251, 1) 40%,
-    rgba(0, 7, 255, 1) 49%,
-    rgba(63, 68, 251, 1) 61%,
-    rgba(99, 181, 193, 1) 86%,
-    rgba(140, 194, 102, 1) 100%
-  ); */
 }
 #welcome-bar h1 {
   font-size: 65px;
@@ -67,8 +56,6 @@ body {
   height: 80vh;
   background-color: #262626;
   border-radius: 20px;
-  /* border: 15px solid;
-  border-image: linear-gradient(to right,#041d69, #22579d, #6feeff, #e5fcfc) 30; */
 }
 .about2 {
   display: flex;
@@ -106,13 +93,6 @@ body {
 }
 .card {
   margin: 20px;
-  /* background: rgb(207, 254, 255);
-  background: linear-gradient(
-    0deg,
-    rgba(207, 254, 255, 0.8836485277704832) 3%,
-    rgba(65, 135, 203, 1) 51%,
-    rgba(0, 51, 147, 1) 100%
-  ); */
   background: rgb(176, 242, 129);
   background: linear-gradient(
     122deg,
