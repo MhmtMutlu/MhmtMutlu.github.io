@@ -1,0 +1,22 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import { skills } from '../../data/skills';
+import { useTranslations, type Locale } from '../../i18n/utils';
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+---
+<section id="skills" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 md:py-32">
+  <SectionHeader eyebrow={t('skills.eyebrow')} title={t('skills.title')} />
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {skills.map((g, i) => (
+      <div class={`glass glass-sheen p-6 ${i === 1 ? 'sm:col-span-2 lg:col-span-2' : ''}`} data-reveal data-reveal-delay={i * 0.05} data-stagger>
+        <p class="eyebrow">{g.title[locale]}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          {g.items.map((s) => (
+            <span class="glass-chip px-3 py-1.5 text-sm transition-colors hover:border-accent hover:text-accent" data-stagger-item>{s}</span>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

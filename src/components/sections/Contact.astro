@@ -1,0 +1,44 @@
+---
+import { profile } from '../../data/profile';
+import { social } from '../../data/social';
+import { useTranslations, type Locale } from '../../i18n/utils';
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+---
+<section id="contact" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 md:py-32">
+  <div class="glass glass-sheen glass-lens relative overflow-hidden px-7 py-14 text-center md:px-16 md:py-24" data-reveal>
+    <span aria-hidden="true" class="pointer-events-none absolute -top-1/2 left-1/2 h-[120%] w-[80%] -translate-x-1/2 rounded-full opacity-40 blur-3xl" style="background: radial-gradient(circle, var(--aurora-1), transparent 60%)"></span>
+    <p class="eyebrow">{t('contact.eyebrow')}</p>
+    <h2 class="display mt-4 text-5xl md:text-7xl">{t('contact.title')}</h2>
+    <p class="mx-auto mt-6 max-w-xl text-muted md:text-lg">{t('contact.lead')}</p>
+    <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <a href={`mailto:${profile.email}`} class="btn-primary">{t('contact.email')}</a>
+      <button type="button" class="btn-ghost" data-copy-email={profile.email} data-copied-label={t('contact.copied')}>
+        <span data-label>{t('contact.copy')}</span>
+      </button>
+    </div>
+    <div class="mt-8 flex justify-center gap-5 font-mono text-sm text-muted">
+      {social.map((s) => (
+        <a class="transition-colors hover:text-accent" href={s.href} target="_blank" rel="noopener me">{s.label}</a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-email]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const label = btn.querySelector('[data-label]')!;
+        const original = label.textContent;
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copyEmail!);
+          label.textContent = btn.dataset.copiedLabel!;
+          setTimeout(() => (label.textContent = original), 1500);
+        } catch {
+          location.href = `mailto:${btn.dataset.copyEmail}`;
+        }
+      });
+    });
+  });
+</script>

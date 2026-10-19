@@ -1,0 +1,67 @@
+---
+import { profile } from '../data/profile';
+import { localePath, type Locale } from '../i18n/utils';
+import { defaultLocale, locales } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  /** locale-less path, e.g. "/" or "/projects/sarj-dev" */
+  path: string;
+  type?: 'website' | 'article';
+  image?: string;
+  jsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, locale, path, type = 'website', image, jsonLd = [] } = Astro.props;
+const site = Astro.site!;
+const abs = (p: string) => new URL(p, site).toString();
+const canonical = abs(localePath(locale, path));
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const ogImage = image ? abs(image) : abs(`${base}/og/${locale}${path === '/' ? '/home' : path}.png`);
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  email: `mailto:${profile.email}`,
+  url: abs(localePath(defaultLocale, '/')),
+  address: { '@type': 'PostalAddress', addressLocality: 'Istanbul', addressCountry: 'TR' },
+  sameAs: [profile.github, profile.linkedin, profile.medium],
+  knowsAbout: ['React', 'TypeScript', 'Next.js', 'Angular', 'Lit', 'Web Components', 'Frontend Architecture', 'AI-assisted engineering'],
+};
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: `${profile.name} — Portfolio`,
+  url: abs(localePath(defaultLocale, '/')),
+  inLanguage: locale,
+};
+const ld = [person, website, ...jsonLd];
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="author" content={profile.name} />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+{locales.map((l) => <link rel="alternate" hreflang={l} href={abs(localePath(l, path))} />)}
+<link rel="alternate" hreflang="x-default" href={abs(localePath(defaultLocale, path))} />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={profile.name} />
+<meta property="og:locale" content={locale === 'tr' ? 'tr_TR' : 'en_US'} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f4f8" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#060a12" />
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />

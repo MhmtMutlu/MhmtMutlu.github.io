@@ -1,0 +1,38 @@
+---
+import { useTranslations, type Locale } from '../../i18n/utils';
+import { profile } from '../../data/profile';
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const facts: [string, string][] = [
+  [t('about.role'), profile.role],
+  [t('about.location'), locale === 'tr' ? 'İstanbul, Türkiye' : profile.location],
+  [t('about.experience'), t('about.years')],
+  [t('about.background'), t('about.degree')],
+];
+---
+<section id="about" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 md:py-32">
+  <div class="mb-10 md:mb-14" data-reveal>
+    <p class="eyebrow">{t('about.eyebrow')}</p>
+  </div>
+  <div class="grid gap-6 md:grid-cols-5">
+    <div class="glass glass-sheen p-7 md:col-span-3 md:p-10" data-reveal>
+      <p class="text-lg leading-relaxed md:text-xl">{t('about.p1')}</p>
+      <p class="mt-5 leading-relaxed text-muted">{t('about.p2')}</p>
+      <p class="mt-5 leading-relaxed text-muted">{t('about.p3')}</p>
+    </div>
+    <div class="flex flex-col gap-6 md:col-span-2">
+      <div class="glass glass-sheen p-7" data-reveal data-reveal-delay="0.1">
+        <p class="eyebrow">{t('about.now')}</p>
+        <p class="mt-3 font-mono text-sm leading-7">{t('about.nowItems')}</p>
+      </div>
+      <dl class="glass glass-sheen grid grid-cols-2 gap-x-4 gap-y-5 p-7" data-reveal data-reveal-delay="0.2">
+        {facts.map(([k, v]) => (
+          <div>
+            <dt class="eyebrow">{k}</dt>
+            <dd class="mt-1.5 text-sm">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>

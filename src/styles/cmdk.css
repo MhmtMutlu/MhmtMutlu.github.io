@@ -1,0 +1,29 @@
+.cmd-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: color-mix(in oklab, var(--c-bg) 55%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: cmd-fade .2s ease;
+}
+.cmd-content {
+  position: fixed; z-index: 61; left: 50%; top: 14vh; transform: translateX(-50%);
+  width: min(92vw, 560px); overflow: hidden; padding: 0;
+  animation: cmd-pop .25s var(--ease-out-expo);
+}
+@keyframes cmd-fade { from { opacity: 0 } }
+@keyframes cmd-pop { from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(.98) } }
+.cmd-input {
+  width: 100%; padding: 18px 20px; font: 500 16px/1 var(--font-sans);
+  background: transparent; border: 0; border-bottom: 1px solid var(--c-line); color: var(--c-fg); outline: none;
+}
+.cmd-input::placeholder { color: var(--c-muted); }
+.cmd-list { max-height: min(52vh, 420px); overflow: auto; padding: 8px; overscroll-behavior: contain; }
+.cmd-empty { padding: 24px; text-align: center; color: var(--c-muted); font-size: 14px; }
+[cmdk-group-heading] { padding: 10px 10px 6px; font: 500 11px/1 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--c-muted); }
+[cmdk-item] {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px;
+  font-size: 14px; color: var(--c-fg); cursor: pointer; transition: background .15s;
+}
+[cmdk-item] span[aria-hidden] { width: 18px; color: var(--c-muted); font-family: var(--font-mono); font-size: 12px; text-align: center; }
+[cmdk-item][data-selected="true"] { background: color-mix(in oklab, var(--c-accent) 14%, transparent); }
+.cmd-footer { display: flex; gap: 6px; justify-content: flex-end; padding: 8px 12px; border-top: 1px solid var(--c-line); }
+.cmd-footer kbd { font: 11px var(--font-mono); padding: 3px 6px; border-radius: 6px; border: 1px solid var(--c-line); color: var(--c-muted); }

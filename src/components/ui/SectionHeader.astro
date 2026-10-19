@@ -1,0 +1,9 @@
+---
+interface Props { eyebrow: string; title: string }
+const { eyebrow, title } = Astro.props;
+const showEyebrow = eyebrow.trim().toLocaleLowerCase() !== title.trim().toLocaleLowerCase();
+---
+<div class="mb-10 md:mb-14" data-reveal>
+  {showEyebrow && <p class="eyebrow">{eyebrow}</p>}
+  {title && <h2 class={`display text-4xl md:text-6xl ${showEyebrow ? 'mt-3' : ''}`}>{title}</h2>}
+</div>

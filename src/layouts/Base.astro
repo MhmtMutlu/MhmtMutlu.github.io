@@ -1,0 +1,87 @@
+---
+import '../styles/global.css';
+import '../styles/cmdk.css';
+import { ClientRouter } from 'astro:transitions';
+import SEO from '../components/SEO.astro';
+import Dock from '../components/ui/Dock.astro';
+import LensFilter from '../components/ui/LensFilter.astro';
+import CommandPalette from '../components/ui/CommandPalette.tsx';
+import Footer from '../components/sections/Footer.astro';
+import { getCollection } from 'astro:content';
+import { profile } from '../data/profile';
+import { social } from '../data/social';
+import { useTranslations, localePath, switchLocalePath, otherLocale, type Locale } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  path: string;
+  type?: 'website' | 'article';
+  image?: string;
+  jsonLd?: Record<string, unknown>[];
+  home?: boolean;
+}
+const { locale, title, description, path, type, image, jsonLd, home = true } = Astro.props;
+const t = useTranslations(locale);
+const prefix = home ? '' : localePath(locale, '/');
+const projects = (await getCollection('projects', (p) => p.data.locale === locale))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({ title: p.data.title, href: localePath(locale, `/projects/${p.data.key}`) }));
+const cmdProps = {
+  labels: {
+    placeholder: t('cmd.placeholder'), empty: t('cmd.empty'), navigate: t('cmd.navigate'), projects: t('cmd.projects'),
+    actions: t('cmd.actions'), social: t('cmd.social'), light: t('cmd.theme.light'), dark: t('cmd.theme.dark'),
+    lang: t('cmd.lang'), copyEmail: t('cmd.copyEmail'), copied: t('contact.copied'),
+  },
+  nav: [
+    { label: t('nav.about'), href: `${prefix}#about` },
+    { label: t('nav.experience'), href: `${prefix}#experience` },
+    { label: t('nav.skills'), href: `${prefix}#skills` },
+    { label: t('nav.projects'), href: `${prefix}#projects` },
+    { label: t('nav.contact'), href: `${prefix}#contact` },
+  ],
+  projects,
+  langHref: switchLocalePath(Astro.url, otherLocale(locale)),
+  email: profile.email,
+  social: social.map(({ label, href }) => ({ label, href })),
+};
+---
+<!doctype html>
+<html lang={locale} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.svg`} type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO {title} {description} {locale} {path} {type} {image} {jsonLd} />
+    <ClientRouter />
+    <script is:inline>
+      (function () {
+        function applyTheme() {
+          var theme = 'light';
+          try {
+            theme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          } catch (e) {}
+          document.documentElement.dataset.theme = theme;
+        }
+        applyTheme();
+        document.addEventListener('astro:after-swap', applyTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <LensFilter />
+    <Dock {locale} {home} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer {locale} />
+    <CommandPalette client:idle {...cmdProps} />
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>

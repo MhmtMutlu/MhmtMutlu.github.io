@@ -1,0 +1,32 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import { experience } from '../../data/experience';
+import { useTranslations, type Locale } from '../../i18n/utils';
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const fmt = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { month: 'short', year: 'numeric' });
+};
+---
+<section id="experience" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 md:py-32">
+  <SectionHeader eyebrow={t('experience.eyebrow')} title={t('experience.title')} />
+  <ol class="glass glass-sheen divide-y divide-line" data-reveal>
+    {experience.map((job) => (
+      <li class="grid gap-3 p-6 md:grid-cols-[180px_1fr_auto] md:items-center md:gap-6 md:p-7">
+        <p class="font-mono text-xs uppercase tracking-widest text-muted">
+          {fmt(job.start)} – {job.end ? fmt(job.end) : t('experience.present')}
+        </p>
+        <div>
+          <h3 class="text-lg font-semibold md:text-xl">
+            {job.url ? <a href={job.url} target="_blank" rel="noopener" class="transition-colors hover:text-accent">{job.company}</a> : job.company}
+          </h3>
+          <p class="mt-0.5 text-sm text-muted">{job.role[locale]}</p>
+        </div>
+        <div class="flex flex-wrap gap-1.5 md:max-w-xs md:justify-end">
+          {job.tags.map((tag) => <span class="glass-chip px-2.5 py-1 font-mono text-[11px] text-muted">{tag}</span>)}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

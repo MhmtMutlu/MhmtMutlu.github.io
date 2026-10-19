@@ -1,0 +1,96 @@
+---
+import { useTranslations, switchLocalePath, otherLocale, localePath, type Locale } from '../../i18n/utils';
+
+interface Props { locale: Locale; home?: boolean }
+const { locale, home = true } = Astro.props;
+const t = useTranslations(locale);
+const other = otherLocale(locale);
+const items = [
+  { href: '#about', label: t('nav.about'), icon: 'user' },
+  { href: '#experience', label: t('nav.experience'), icon: 'briefcase' },
+  { href: '#skills', label: t('nav.skills'), icon: 'sparkles' },
+  { href: '#projects', label: t('nav.projects'), icon: 'layers' },
+  { href: '#contact', label: t('nav.contact'), icon: 'mail' },
+];
+const prefix = home ? '' : localePath(locale, '/');
+const icons: Record<string, string> = {
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  sparkles: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  home: '<path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/>',
+};
+---
+<nav
+  id="dock"
+  aria-label="Primary"
+  class="fixed left-1/2 z-40 -translate-x-1/2 bottom-[max(0.75rem,env(safe-area-inset-bottom))] md:top-5 md:bottom-auto"
+>
+  <div class="glass glass-sheen glass-lens flex items-center gap-0.5 px-1.5 py-1 md:gap-1 md:px-2 md:py-1.5 rounded-full" style="--radius-glass: 999px">
+    <a href={localePath(locale, '/')} class="dock-btn dock-home" aria-label={t('nav.home')} data-tip={t('nav.home')}>
+      <svg viewBox="0 0 24 24" set:html={icons.home} />
+    </a>
+    <span class="dock-sep" aria-hidden="true"></span>
+    {items.map((it) => (
+      <a href={`${prefix}${it.href}`} class="dock-btn" data-dock-link={home ? '' : undefined} data-tip={it.label} aria-label={it.label}>
+        <svg viewBox="0 0 24 24" set:html={icons[it.icon]} />
+      </a>
+    ))}
+    <span class="dock-sep" aria-hidden="true"></span>
+    <button type="button" class="dock-btn" id="theme-toggle" aria-label={t('nav.theme')} data-tip={t('nav.theme')}>
+      <svg viewBox="0 0 24 24" class="icon-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg viewBox="0 0 24 24" class="icon-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+    </button>
+    <a href={switchLocalePath(Astro.url, other)} class="dock-btn font-mono text-[11px] font-semibold tracking-wider" hreflang={other} lang={other} aria-label={t('nav.lang')} data-tip={t('nav.lang')}>
+      {t('nav.langShort')}
+    </a>
+    <button type="button" class="dock-btn" id="cmd-open" aria-label={t('nav.menu')} data-tip="⌘K">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+  </div>
+</nav>
+
+<style>
+  .dock-btn {
+    position: relative; display: inline-flex; height: 40px; width: 40px; align-items: center; justify-content: center;
+    border-radius: 999px; color: var(--c-muted);
+    transition: transform .3s var(--ease-spring), color .3s, background-color .3s;
+  }
+  .dock-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .dock-btn:hover, .dock-btn[data-active] { color: var(--c-fg); background: color-mix(in oklab, var(--c-fg) 7%, transparent); }
+  .dock-btn[data-active]::after {
+    content: ""; position: absolute; bottom: 3px; left: 50%; width: 4px; height: 4px; border-radius: 999px;
+    transform: translateX(-50%); background: var(--c-accent);
+  }
+  @media (hover: hover) {
+    .dock-btn:hover { transform: translateY(-3px) scale(1.08); }
+    .dock-btn::before {
+      content: attr(data-tip);
+      position: absolute; top: calc(100% + 10px); left: 50%; transform: translate(-50%, -4px);
+      white-space: nowrap; font-size: 11px; font-family: var(--font-mono); letter-spacing: .04em;
+      padding: 4px 8px; border-radius: 8px; background: var(--c-fg); color: var(--c-bg);
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    }
+    .dock-btn:hover::before { opacity: 1; transform: translate(-50%, 0); }
+  }
+  @media (max-width: 767px) {
+    .dock-btn { height: 38px; width: 38px; }
+    .dock-btn svg { width: 17px; height: 17px; }
+    .dock-sep { display: none; }
+    .dock-home { display: none; }
+    .dock-btn::before { top: auto; bottom: calc(100% + 10px); }
+  }
+  .dock-sep { width: 1px; height: 20px; background: var(--c-line); margin: 0 2px; }
+  .icon-moon { display: none; }
+  :global([data-theme="dark"]) .icon-moon { display: block; }
+  :global([data-theme="dark"]) .icon-sun { display: none; }
+</style>
+
+<script>
+  import { toggleTheme } from '../../lib/theme';
+  document.addEventListener('astro:page-load', () => {
+    document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+    document.getElementById('cmd-open')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('cmd:open')));
+  });
+</script>

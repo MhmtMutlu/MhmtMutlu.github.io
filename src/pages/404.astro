@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { useTranslations, localePath } from '../i18n/utils';
+const t = useTranslations('en');
+---
+<Base locale="en" title={`404 — Mehmet Mutlu`} description={t('404.lead')} path="/404" home={false}>
+  <section class="mx-auto flex min-h-[80svh] max-w-3xl flex-col items-center justify-center px-5 text-center">
+    <div class="glass glass-sheen p-10 md:p-16">
+      <p class="eyebrow">404</p>
+      <h1 class="display mt-4 text-5xl md:text-7xl">{t('404.title')}</h1>
+      <p class="mt-5 text-muted">{t('404.lead')}</p>
+      <a href={localePath('en', '/')} class="btn-primary mt-8">{t('404.cta')}</a>
+    </div>
+  </section>
+</Base>

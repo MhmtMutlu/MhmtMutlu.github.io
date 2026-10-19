@@ -1,0 +1,21 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import { education } from '../../data/education';
+import { useTranslations, type Locale } from '../../i18n/utils';
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+---
+<section id="education" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-12 md:py-20">
+  <SectionHeader eyebrow={t('education.eyebrow')} title={t('education.title')} />
+  <div class="grid gap-5 md:grid-cols-2">
+    {education.map((e, i) => (
+      <div class="glass glass-sheen flex items-start justify-between gap-4 p-6" data-reveal data-reveal-delay={i * 0.08}>
+        <div>
+          <h3 class="text-lg font-semibold">{e.school[locale]}</h3>
+          <p class="mt-1 text-sm text-muted">{e.degree[locale]}</p>
+        </div>
+        <p class="font-mono text-xs text-muted whitespace-nowrap">{e.period}</p>
+      </div>
+    ))}
+  </div>
+</section>
